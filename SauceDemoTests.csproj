@@ -7,6 +7,10 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <GenerateSpecFlowCodeBehindFiles>true</GenerateSpecFlowCodeBehindFiles>
+
+    <!-- Enable parallel execution -->
+    <ParallelizeAssemblies>true</ParallelizeAssemblies>
+    <ParallelizeTestCollections>true</ParallelizeTestCollections>
   </PropertyGroup>
 
   <ItemGroup>
