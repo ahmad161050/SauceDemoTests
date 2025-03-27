@@ -1,0 +1,18 @@
+{
+    "bindingCulture": {
+      "language": "en-us"
+    },
+    "runtime": {
+      "testThreadCount": 4,
+      "stopAtFirstError": false
+    },
+    "generator": {
+      "allowDebugGeneratedFiles": true,
+      "generateAsyncTests": true,
+      "addNonParallelizableMarkerForTags": "@non-parallel"
+    },
+    "nunit": {
+      "allowParallelExecution": true
+    }
+  }
+  

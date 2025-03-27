@@ -2,7 +2,6 @@ Feature: Login Functionality
   As a user of SauceDemo
   I want to log in using valid credentials
   So that I can access the inventory page
-  And I want to see proper errors when credentials are invalid
 
   Scenario: Login fails for locked out user
     Given I am on the SauceDemo login page
@@ -17,6 +16,7 @@ Feature: Login Functionality
     And I enter the password
     And I click the login button
     Then I should be redirected to the inventory page
+
 
   ##########################
   # OPTIONAL TEST SCENARIOS
