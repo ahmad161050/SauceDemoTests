@@ -85,9 +85,19 @@ namespace SauceDemoTests.StepDefinitions
         [Then(@"I should see the order confirmation message")]
         public async Task ThenIShouldSeeOrderConfirmation()
         {
-            Logger.Info("Validating order confirmation...");
-            Assert.IsTrue(await checkoutPage.IsOrderCompleteMessageVisibleAsync(), "❌ Order confirmation not found");
-            Logger.Info("✅ Order placed successfully.");
+            Logger.Info("🔍 Validating order confirmation...");
+
+            var orderConfirmationPage = new OrderConfirmationPage(Page);
+
+            bool headerVisible = await orderConfirmationPage.IsCheckoutHeaderVisibleAsync();
+            bool thankYouVisible = await orderConfirmationPage.IsThankYouMessageVisibleAsync();
+            string thankYouText = await orderConfirmationPage.GetThankYouMessageTextAsync();
+
+            Assert.IsTrue(headerVisible, "❌ 'Checkout: Complete!' header not visible.");
+            Assert.IsTrue(thankYouVisible, "❌ 'Thank you for your order!' message not visible.");
+            Assert.AreEqual("Thank you for your order!", thankYouText.Trim(), "❌ Thank you message text mismatch.");
+
+            Logger.Info("✅ Order confirmation verified: Both 'Thank you for your order' and 'Checkout: Complete!' info texts are present.");
         }
 
         // ✅ NEW: For Task 3 — DB insert validation
