@@ -27,7 +27,13 @@ namespace SauceDemoTests.Pages
 
         public async Task<bool> IsOrderCompleteMessageVisibleAsync()
         {
-            return await page.IsVisibleAsync(".complete-header");
+            var locator = page.Locator(".complete-header");
+            if (!await locator.IsVisibleAsync())
+                return false;
+
+            var text = await locator.InnerTextAsync();
+            return text.Trim() == "Thank you for your order!";
         }
+
     }
 }

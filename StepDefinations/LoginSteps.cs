@@ -3,14 +3,14 @@ using SauceDemoTests.Utils;
 using TechTalk.SpecFlow;
 using NUnit.Framework;
 
-
 namespace SauceDemoTests.StepDefinitions
 {
     [Binding]
-    [Parallelizable(ParallelScope.All)] // ✅ Enable full parallelism for this test class
     public class LoginSteps : TestBase
     {
         private LoginPage loginPage;
+
+        public LoginSteps(ScenarioContext context) : base(context) { }
 
         [Given(@"I am on the SauceDemo login page")]
         public async Task GivenIAmOnTheSauceDemoLoginPage()
@@ -53,12 +53,9 @@ namespace SauceDemoTests.StepDefinitions
         public async Task ThenIShouldSeeAnErrorMessage(string expectedMessage)
         {
             Logger.Info("Verifying error message.");
-            string actualMessage = await loginPage.GetErrorMessageAsync();
-            Logger.Info($"Actual error message: \"{actualMessage}\"");
-
+            var actualMessage = await loginPage.GetErrorMessageAsync();
             Assert.That(actualMessage, Does.Contain(expectedMessage));
-            Logger.Info("Error message validated successfully.");
+            Logger.Info("Error message validated.");
         }
-
     }
 }
