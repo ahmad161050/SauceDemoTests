@@ -17,6 +17,18 @@ namespace SauceDemoTests.Pages
         {
             await page.ClickAsync(".shopping_cart_link");
         }
+
+        // ✅ Opens the hamburger menu
+        public async Task OpenMenuAsync()
+        {
+            await page.ClickAsync("#react-burger-menu-btn");
+        }
+
+        // ✅ Clicks the logout option in sidebar
+        public async Task LogoutAsync()
+        {
+            await OpenMenuAsync(); // Ensure menu is open
+            await page.ClickAsync("#logout_sidebar_link");
+        }
     }
 }
-
