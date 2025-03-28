@@ -22,5 +22,19 @@ namespace SauceDemoTests.Utils
 
             cmd.ExecuteNonQuery();
         }
+        public static void DeleteOrdersForCustomer(string firstName)
+        {
+            using var connection = new MySqlConnection(ConnectionString);
+            connection.Open();
+
+            var deleteQuery = @"DELETE FROM Orders WHERE FirstName = @FirstName";
+
+            using var cmd = new MySqlCommand(deleteQuery, connection);
+            cmd.Parameters.AddWithValue("@FirstName", firstName);
+
+            cmd.ExecuteNonQuery();
+        }
+
     }
+
 }

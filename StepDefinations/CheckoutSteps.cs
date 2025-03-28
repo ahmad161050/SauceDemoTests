@@ -87,11 +87,17 @@ namespace SauceDemoTests.StepDefinitions
         public async Task WhenICompleteCheckout(string product, string firstName, string lastName, string postalCode)
         {
             Logger.Info($"🛒 Performing complete checkout for {product} / {firstName} {lastName}");
+
+            // Clean any previous test data for this user
+            OrderDatabaseHelper.DeleteOrdersForCustomer(firstName);
+
+            // Perform the UI checkout
             await _checkoutHelper.CompleteCheckoutAsync(product, firstName, lastName, postalCode);
 
-            // ✅ Insert into database
+            // Insert into database
             OrderDatabaseHelper.InsertOrder(product, firstName, lastName, postalCode);
         }
+
 
         [Then(@"the order should be saved in the database for ""(.*)""")]
         public void ThenOrderShouldExistInDatabase(string firstName)
