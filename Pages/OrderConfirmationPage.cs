@@ -7,15 +7,17 @@ namespace SauceDemoTests.Pages
     {
         private readonly IPage page;
 
-        // ✅ Locators
+        // 🔒 Locators
         private readonly ILocator checkoutCompleteHeader;
         private readonly ILocator thankYouMessage;
 
+        // 🧠 Constructor initializes locators once
         public OrderConfirmationPage(IPage page)
         {
             this.page = page;
-            checkoutCompleteHeader = page.Locator("span.title"); // e.g., "Checkout: Complete!"
-            thankYouMessage = page.Locator("h2.complete-header"); // e.g., "Thank you for your order!"
+
+            checkoutCompleteHeader = page.Locator("span.title");              // "Checkout: Complete!"
+            thankYouMessage = page.Locator("h2.complete-header");             // "Thank you for your order!"
         }
 
         public async Task<bool> IsCheckoutHeaderVisibleAsync()

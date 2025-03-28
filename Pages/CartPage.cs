@@ -6,12 +6,19 @@ namespace SauceDemoTests.Pages
     {
         private readonly IPage page;
 
-        public CartPage(IPage page) => this.page = page;
+        // 🔒 Locators
+        private readonly ILocator checkoutButton;
+
+        // 🧠 Constructor initializes locators once
+        public CartPage(IPage page)
+        {
+            this.page = page;
+            checkoutButton = page.Locator("#checkout");
+        }
 
         public async Task ClickCheckoutButtonAsync()
         {
-            await page.ClickAsync("#checkout");
+            await checkoutButton.ClickAsync();
         }
     }
 }
-

@@ -7,42 +7,61 @@ namespace SauceDemoTests.Pages
     {
         private readonly IPage page;
 
-        public CheckoutPage(IPage page) => this.page = page;
+        // 🔒 Locators
+        private readonly ILocator firstNameInput;
+        private readonly ILocator lastNameInput;
+        private readonly ILocator postalCodeInput;
+        private readonly ILocator continueButton;
+        private readonly ILocator finishButton;
+        private readonly ILocator orderCompleteHeader;
+        private readonly ILocator totalPriceLabel;
+
+        // 🧠 Constructor initializes locators once
+        public CheckoutPage(IPage page)
+        {
+            this.page = page;
+
+            firstNameInput = page.Locator("#first-name");
+            lastNameInput = page.Locator("#last-name");
+            postalCodeInput = page.Locator("#postal-code");
+            continueButton = page.Locator("#continue");
+            finishButton = page.Locator("#finish");
+            orderCompleteHeader = page.Locator(".complete-header");
+            totalPriceLabel = page.Locator(".summary_total_label");
+        }
 
         public async Task FillCheckoutInfoAsync(string firstName, string lastName, string postalCode)
         {
-            await page.FillAsync("#first-name", firstName);
-            await page.FillAsync("#last-name", lastName);
-            await page.FillAsync("#postal-code", postalCode);
+            await firstNameInput.FillAsync(firstName);
+            await lastNameInput.FillAsync(lastName);
+            await postalCodeInput.FillAsync(postalCode);
         }
 
         public async Task ClickContinueButtonAsync()
         {
-            await page.ClickAsync("#continue");
+            await continueButton.ClickAsync();
         }
 
         public async Task ClickFinishButtonAsync()
         {
-            await page.ClickAsync("#finish");
+            await finishButton.ClickAsync();
         }
 
         public async Task<bool> IsOrderCompleteMessageVisibleAsync()
         {
-            var locator = page.Locator(".complete-header");
-            if (!await locator.IsVisibleAsync())
+            if (!await orderCompleteHeader.IsVisibleAsync())
                 return false;
 
-            var text = await locator.InnerTextAsync();
+            var text = await orderCompleteHeader.InnerTextAsync();
             return text.Trim() == "Thank you for your order!";
         }
+
         public async Task<decimal> GetTotalPriceAsync()
         {
-            var totalLabel = await page.InnerTextAsync(".summary_total_label"); // Example: "Total: $32.39"
-            var match = Regex.Match(totalLabel, @"Total:\s*\$(\d+\.\d{2})");
+            var totalText = await totalPriceLabel.InnerTextAsync(); // e.g., "Total: $32.39"
+            var match = Regex.Match(totalText, @"Total:\s*\$(\d+\.\d{2})");
 
             return match.Success ? decimal.Parse(match.Groups[1].Value) : 0;
         }
-
-
     }
 }
