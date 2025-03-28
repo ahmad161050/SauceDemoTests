@@ -1,7 +1,7 @@
 Feature: Checkout Functionality
   As a logged-in user
   I want to add a product to the cart and complete checkout
-  So that I can place an order successfully
+  So that I can place an order and have it recorded in the database
 
   Scenario: User can complete the checkout process
     Given I am logged in as a standard user
@@ -13,8 +13,8 @@ Feature: Checkout Functionality
     And I click the finish button
     Then I should see the order confirmation message
 
-  Scenario: Checkout inserts order in the database
+  Scenario: Checkout inserts accurate order in the database
     Given I am logged in as a standard user
     When I complete the checkout with product "Sauce Labs Backpack" and user "John", "Doe", "12345"
-    Then the order should be saved in the database for "John"
+    Then the order should be saved in the database for product "Sauce Labs Backpack"
 

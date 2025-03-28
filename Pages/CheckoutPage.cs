@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 
 namespace SauceDemoTests.Pages
@@ -34,6 +35,14 @@ namespace SauceDemoTests.Pages
             var text = await locator.InnerTextAsync();
             return text.Trim() == "Thank you for your order!";
         }
+        public async Task<decimal> GetTotalPriceAsync()
+        {
+            var totalLabel = await page.InnerTextAsync(".summary_total_label"); // Example: "Total: $32.39"
+            var match = Regex.Match(totalLabel, @"Total:\s*\$(\d+\.\d{2})");
+
+            return match.Success ? decimal.Parse(match.Groups[1].Value) : 0;
+        }
+
 
     }
 }

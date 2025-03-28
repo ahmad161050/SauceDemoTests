@@ -36,7 +36,7 @@ namespace SauceDemoTests.Features
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Checkout Functionality", "  As a logged-in user\n  I want to add a product to the cart and complete checkout" +
-                    "\n  So that I can place an order successfully", ProgrammingLanguage.CSharp, featureTags);
+                    "\n  So that I can place an order and have it recorded in the database", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -120,12 +120,12 @@ namespace SauceDemoTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Checkout inserts order in the database")]
-        public void CheckoutInsertsOrderInTheDatabase()
+        [NUnit.Framework.DescriptionAttribute("Checkout inserts accurate order in the database")]
+        public void CheckoutInsertsAccurateOrderInTheDatabase()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Checkout inserts order in the database", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Checkout inserts accurate order in the database", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 16
   this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -144,7 +144,7 @@ namespace SauceDemoTests.Features
                         ", \"12345\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 19
-    testRunner.Then("the order should be saved in the database for \"John\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.Then("the order should be saved in the database for product \"Sauce Labs Backpack\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

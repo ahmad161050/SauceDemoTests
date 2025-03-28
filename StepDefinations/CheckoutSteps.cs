@@ -15,19 +15,27 @@ namespace SauceDemoTests.StepDefinitions
         private CartPage cartPage;
         private CheckoutPage checkoutPage;
         private readonly CheckoutHelper _checkoutHelper;
+        private readonly ScenarioContext _scenarioContext;
+
 
 
         public CheckoutSteps(ScenarioContext context) : base(context)
         {
+            _scenarioContext = context;
             _checkoutHelper = new CheckoutHelper(Page);
         }
+
 
         [Given(@"I am logged in as a standard user")]
         public async Task GivenIAmLoggedInAsAStandardUser()
         {
             Logger.Info("Logging in as standard_user...");
-            await PerformLoginAsync("standard_user");
+            var username = "standard_user";
+            await PerformLoginAsync(username);
+
+            _scenarioContext["LoggedInUsername"] = username;
         }
+
 
         [When(@"I add a ""(.*)"" to the cart")]
         public async Task WhenIAddProductToCart(string productName)
@@ -88,24 +96,53 @@ namespace SauceDemoTests.StepDefinitions
         {
             Logger.Info($"🛒 Performing complete checkout for {product} / {firstName} {lastName}");
 
-            // Clean any previous test data for this user
-            OrderDatabaseHelper.DeleteOrdersForCustomer(firstName);
+            // 💡 Get the actual logged-in username saved earlier
+            var username = _scenarioContext["LoggedInUsername"]?.ToString();
+            if (string.IsNullOrEmpty(username))
+            {
+                Logger.Info("⚠️ LoggedInUsername not found in ScenarioContext. Falling back to firstName.");
+                username = firstName; // fallback, just in case
+            }
 
-            // Perform the UI checkout
-            await _checkoutHelper.CompleteCheckoutAsync(product, firstName, lastName, postalCode);
+            // 🧹 Clean previous test data
+            OrderDatabaseHelper.DeleteOrdersForCustomer(username);
 
-            // Insert into database
-            OrderDatabaseHelper.InsertOrder(product, firstName, lastName, postalCode);
+            // ✅ Run full checkout and capture total price BEFORE finish
+            decimal totalPrice = await _checkoutHelper.CompleteCheckoutAsync(product, firstName, lastName, postalCode);
+
+            var checkoutPage = new CheckoutPage(Page);
+            bool isOrderConfirmed = await checkoutPage.IsOrderCompleteMessageVisibleAsync();
+
+            if (isOrderConfirmed)
+            {
+                Logger.Info($"✅ UI checkout success confirmed. Inserting into DB with price: {totalPrice}");
+                OrderDatabaseHelper.InsertOrder(username, product, totalPrice); // 👈 save correct user
+            }
+            else
+            {
+                Logger.Info("⚠️ UI checkout didn't confirm. Skipping DB insert.");
+            }
         }
 
-
-        [Then(@"the order should be saved in the database for ""(.*)""")]
-        public void ThenOrderShouldExistInDatabase(string firstName)
+        [Then(@"the order should be saved in the database for product ""(.*)""")]
+        public void ThenOrderShouldExistInDatabase(string productName)
         {
-            Logger.Info("🔍 Verifying DB order insert...");
-            bool exists = OrderRepository.IsOrderPresentForCustomer(firstName);
-            Assert.IsTrue(exists, $"❌ No order found in DB for '{firstName}'");
-            Logger.Info("✅ Order confirmed in DB.");
+            Logger.Info("🔍 Verifying order in database with correct user and product...");
+
+            var username = _scenarioContext["LoggedInUsername"]?.ToString();
+            if (string.IsNullOrEmpty(username))
+            {
+                Assert.Fail("❌ LoggedInUsername not found in ScenarioContext. Cannot verify order.");
+            }
+
+            var order = OrderRepository.GetLatestOrderForUser(username);
+
+            Assert.IsNotNull(order, $"❌ No order found in DB for user '{username}'");
+            Assert.AreEqual(productName, order.ProductName, $"❌ Product mismatch. Expected '{productName}' but got '{order.ProductName}'");
+
+            Logger.Info($"✅ Order verified: User = {order.Username}, Product = {order.ProductName}, Price = {order.TotalPrice}, Date = {order.OrderDate}");
         }
+
+
     }
 }
