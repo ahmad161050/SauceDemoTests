@@ -1,7 +1,10 @@
+using SauceDemoTests.Helpers;
 using SauceDemoTests.Pages;
 using SauceDemoTests.Utils;
+using SauceDemoTests.Database;
 using TechTalk.SpecFlow;
 using NUnit.Framework;
+
 
 namespace SauceDemoTests.StepDefinitions
 {
@@ -11,8 +14,13 @@ namespace SauceDemoTests.StepDefinitions
         private HomePage homePage;
         private CartPage cartPage;
         private CheckoutPage checkoutPage;
+        private readonly CheckoutHelper _checkoutHelper;
 
-        public CheckoutSteps(ScenarioContext context) : base(context) { }
+
+        public CheckoutSteps(ScenarioContext context) : base(context)
+        {
+            _checkoutHelper = new CheckoutHelper(Page);
+        }
 
         [Given(@"I am logged in as a standard user")]
         public async Task GivenIAmLoggedInAsAStandardUser()
@@ -72,6 +80,26 @@ namespace SauceDemoTests.StepDefinitions
             Logger.Info("Validating order confirmation...");
             Assert.IsTrue(await checkoutPage.IsOrderCompleteMessageVisibleAsync(), "❌ Order confirmation not found");
             Logger.Info("✅ Order placed successfully.");
+        }
+
+        // ✅ NEW: For Task 3 — DB insert validation
+        [When(@"I complete the checkout with product ""(.*)"" and user ""(.*)"", ""(.*)"", ""(.*)""")]
+        public async Task WhenICompleteCheckout(string product, string firstName, string lastName, string postalCode)
+        {
+            Logger.Info($"🛒 Performing complete checkout for {product} / {firstName} {lastName}");
+            await _checkoutHelper.CompleteCheckoutAsync(product, firstName, lastName, postalCode);
+
+            // ✅ Insert into database
+            OrderDatabaseHelper.InsertOrder(product, firstName, lastName, postalCode);
+        }
+
+        [Then(@"the order should be saved in the database for ""(.*)""")]
+        public void ThenOrderShouldExistInDatabase(string firstName)
+        {
+            Logger.Info("🔍 Verifying DB order insert...");
+            bool exists = OrderRepository.IsOrderPresentForCustomer(firstName);
+            Assert.IsTrue(exists, $"❌ No order found in DB for '{firstName}'");
+            Logger.Info("✅ Order confirmed in DB.");
         }
     }
 }

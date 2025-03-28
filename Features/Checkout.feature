@@ -12,3 +12,9 @@ Feature: Checkout Functionality
     And I click the continue button
     And I click the finish button
     Then I should see the order confirmation message
+
+  Scenario: Checkout inserts order in the database
+    Given I am logged in as a standard user
+    When I complete the checkout with product "Sauce Labs Backpack" and user "John", "Doe", "12345"
+    Then the order should be saved in the database for "John"
+
