@@ -1,3 +1,6 @@
+// Encapsulates actions and validations on the SauceDemo checkout page.
+// Supports input filling, total price capture, and final order confirmation.
+
 using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 
@@ -7,7 +10,7 @@ namespace SauceDemoTests.Pages
     {
         private readonly IPage page;
 
-        // 🔒 Locators
+        // Locators for checkout form fields and controls
         private readonly ILocator firstNameInput;
         private readonly ILocator lastNameInput;
         private readonly ILocator postalCodeInput;
@@ -16,7 +19,7 @@ namespace SauceDemoTests.Pages
         private readonly ILocator orderCompleteHeader;
         private readonly ILocator totalPriceLabel;
 
-        // 🧠 Constructor initializes locators once
+        // Constructor initializes all necessary locators once
         public CheckoutPage(IPage page)
         {
             this.page = page;
@@ -30,6 +33,7 @@ namespace SauceDemoTests.Pages
             totalPriceLabel = page.Locator(".summary_total_label");
         }
 
+        // Fills in the checkout form fields
         public async Task FillCheckoutInfoAsync(string firstName, string lastName, string postalCode)
         {
             await firstNameInput.FillAsync(firstName);
@@ -37,16 +41,19 @@ namespace SauceDemoTests.Pages
             await postalCodeInput.FillAsync(postalCode);
         }
 
+        // Clicks the Continue button
         public async Task ClickContinueButtonAsync()
         {
             await continueButton.ClickAsync();
         }
 
+        // Clicks the Finish button to complete checkout
         public async Task ClickFinishButtonAsync()
         {
             await finishButton.ClickAsync();
         }
 
+        // Validates if the order confirmation message is visible and correct
         public async Task<bool> IsOrderCompleteMessageVisibleAsync()
         {
             if (!await orderCompleteHeader.IsVisibleAsync())
@@ -56,6 +63,7 @@ namespace SauceDemoTests.Pages
             return text.Trim() == "Thank you for your order!";
         }
 
+        // Extracts the total price displayed during checkout
         public async Task<decimal> GetTotalPriceAsync()
         {
             var totalText = await totalPriceLabel.InnerTextAsync(); // e.g., "Total: $32.39"
