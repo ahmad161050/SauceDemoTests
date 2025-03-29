@@ -1,3 +1,6 @@
+// Step definitions for the checkout process in SauceDemo using SpecFlow.
+// Covers end-to-end flow from cart to order confirmation and database verification.
+
 using SauceDemoTests.Helpers;
 using SauceDemoTests.Pages;
 using SauceDemoTests.Utils;
@@ -16,13 +19,14 @@ namespace SauceDemoTests.StepDefinitions
         private readonly CheckoutHelper _checkoutHelper;
         private readonly ScenarioContext _scenarioContext;
 
+        // Constructor to initialize scenario context and checkout helper.
         public CheckoutSteps(ScenarioContext context) : base(context)
         {
             _scenarioContext = context;
             _checkoutHelper = new CheckoutHelper(Page);
         }
 
-        // Logs in using the standard user credentials and stores username in context
+        // Logs in using the standard user credentials and stores username in context.
         [Given("I am logged in as a standard user")]
         public async Task GivenIAmLoggedInAsAStandardUser()
         {
@@ -32,7 +36,7 @@ namespace SauceDemoTests.StepDefinitions
             _scenarioContext["LoggedInUsername"] = username;
         }
 
-        // Adds a specified product to the shopping cart
+        // Adds a specified product to the shopping cart.
         [When("I add a \"(.*)\" to the cart")]
         public async Task WhenIAddProductToCart(string productName)
         {
@@ -41,7 +45,7 @@ namespace SauceDemoTests.StepDefinitions
             await homePage.AddBackpackToCartAsync(); // Currently fixed to Backpack
         }
 
-        // Navigates from home page to cart page
+        // Navigates from home page to cart page.
         [When("I proceed to the cart")]
         public async Task WhenIProceedToTheCart()
         {
@@ -50,7 +54,7 @@ namespace SauceDemoTests.StepDefinitions
             cartPage = new CartPage(Page);
         }
 
-        // Clicks the checkout button on the cart page
+        // Clicks the checkout button on the cart page.
         [When("I click the checkout button")]
         public async Task WhenIClickTheCheckoutButton()
         {
@@ -59,7 +63,7 @@ namespace SauceDemoTests.StepDefinitions
             checkoutPage = new CheckoutPage(Page);
         }
 
-        // Fills in user details on the checkout info page
+        // Fills in user details on the checkout info page.
         [When("I fill in the checkout information with \"(.*)\", \"(.*)\", and \"(.*)\"")]
         public async Task WhenIFillInCheckoutInformation(string firstName, string lastName, string postalCode)
         {
@@ -67,7 +71,7 @@ namespace SauceDemoTests.StepDefinitions
             await checkoutPage.FillCheckoutInfoAsync(firstName, lastName, postalCode);
         }
 
-        // Clicks the continue button to proceed in checkout
+        // Clicks the continue button to proceed in checkout.
         [When("I click the continue button")]
         public async Task WhenIClickTheContinueButton()
         {
@@ -75,7 +79,7 @@ namespace SauceDemoTests.StepDefinitions
             await checkoutPage.ClickContinueButtonAsync();
         }
 
-        // Clicks the finish button to complete the checkout process
+        // Clicks the finish button to complete the checkout process.
         [When("I click the finish button")]
         public async Task WhenIClickTheFinishButton()
         {
@@ -83,7 +87,7 @@ namespace SauceDemoTests.StepDefinitions
             await checkoutPage.ClickFinishButtonAsync();
         }
 
-        // Verifies that order confirmation text appears after checkout
+        // Verifies that order confirmation text appears after checkout.
         [Then("I should see the order confirmation message")]
         public async Task ThenIShouldSeeOrderConfirmation()
         {
@@ -101,7 +105,7 @@ namespace SauceDemoTests.StepDefinitions
             Logger.Info("Order confirmation verified: Both confirmation texts are present.");
         }
 
-        // Completes checkout, confirms UI success, and inserts order into the database
+        // Completes checkout, confirms UI success, and inserts order into the database.
         [When("I complete the checkout with product \"(.*)\" and user \"(.*)\", \"(.*)\", \"(.*)\"")]
         public async Task WhenICompleteCheckout(string product, string firstName, string lastName, string postalCode)
         {
@@ -131,7 +135,7 @@ namespace SauceDemoTests.StepDefinitions
             }
         }
 
-        // Validates the most recent DB record for the user matches expected product
+        // Validates the most recent DB record for the user matches expected product.
         [Then("the order should be saved in the database for product \"(.*)\"")]
         public void ThenOrderShouldExistInDatabase(string productName)
         {

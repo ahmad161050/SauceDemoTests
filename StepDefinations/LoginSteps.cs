@@ -1,3 +1,6 @@
+// Step definitions for login functionality in SauceDemo using SpecFlow.
+// Covers user login actions and corresponding success or error validations.
+
 using SauceDemoTests.Pages;
 using SauceDemoTests.Utils;
 using TechTalk.SpecFlow;
@@ -10,8 +13,10 @@ namespace SauceDemoTests.StepDefinitions
     {
         private LoginPage loginPage;
 
+        // Initializes the scenario context and base test functionality.
         public LoginSteps(ScenarioContext context) : base(context) { }
 
+        // Navigates to the SauceDemo login page.
         [Given(@"I am on the SauceDemo login page")]
         public async Task GivenIAmOnTheSauceDemoLoginPage()
         {
@@ -20,6 +25,7 @@ namespace SauceDemoTests.StepDefinitions
             await loginPage.GoToAsync();
         }
 
+        // Enters the specified username into the login form.
         [When(@"I enter username ""(.*)""")]
         public async Task WhenIEnterUsername(string username)
         {
@@ -27,6 +33,7 @@ namespace SauceDemoTests.StepDefinitions
             await loginPage.EnterUsernameAsync(username);
         }
 
+        // Enters the default password into the login form.
         [When(@"I enter the password")]
         public async Task WhenIEnterThePassword()
         {
@@ -34,6 +41,7 @@ namespace SauceDemoTests.StepDefinitions
             await loginPage.EnterPasswordAsync("secret_sauce");
         }
 
+        // Clicks the login button to attempt login.
         [When(@"I click the login button")]
         public async Task WhenIClickTheLoginButton()
         {
@@ -41,6 +49,7 @@ namespace SauceDemoTests.StepDefinitions
             await loginPage.ClickLoginAsync();
         }
 
+        // Verifies that login was successful by checking URL redirection.
         [Then(@"I should be redirected to the inventory page")]
         public async Task ThenIShouldBeRedirectedToTheInventoryPage()
         {
@@ -49,6 +58,7 @@ namespace SauceDemoTests.StepDefinitions
             Logger.Info("Redirection successful.");
         }
 
+        // Asserts that the correct error message appears on failed login.
         [Then(@"I should see an error message ""(.*)""")]
         public async Task ThenIShouldSeeAnErrorMessage(string expectedMessage)
         {

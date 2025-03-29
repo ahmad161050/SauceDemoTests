@@ -1,11 +1,16 @@
+// Repository for accessing order-related data from the SauceDemoDB database.
+// Provides methods to verify order presence and retrieve the latest order for a user.
+
 using MySql.Data.MySqlClient;
 using SauceDemoTests.Utils;
+
 namespace SauceDemoTests.Database
 {
     public static class OrderRepository
     {
         private const string ConnectionString = "server=localhost;user=root;password=ADMIN123;database=SauceDemoDB";
 
+        // Checks if any orders exist for the specified customer username.
         public static bool IsOrderPresentForCustomer(string firstName)
         {
             using var connection = new MySqlConnection(ConnectionString);
@@ -19,6 +24,7 @@ namespace SauceDemoTests.Database
             return count > 0;
         }
 
+        // Retrieves the most recent order placed by the specified user.
         public static OrderRecord? GetLatestOrderForUser(string username)
         {
             using var connection = new MySqlConnection(ConnectionString);
@@ -49,5 +55,4 @@ namespace SauceDemoTests.Database
             return null;
         }
     }
-
 }
